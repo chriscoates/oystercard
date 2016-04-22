@@ -2,7 +2,7 @@ require_relative "journey"
 
 class JourneyLog
 
-  attr_reader :journeys, :journey, :current_journey, :journey_class
+  attr_reader :current_journey, :end
 
   def initialize(journey_class = Journey)
     @journey_class = journey_class
@@ -15,7 +15,7 @@ class JourneyLog
   end
 
   def current_journey
-    journeys.last(&:complete?) || journey_class.new
+    journeys.reject(&:complete?).last || journey_class.new
   end
 
 
@@ -25,12 +25,19 @@ class JourneyLog
   # end
 
   def finish(exit_station)
-    journey_class.finish(exit_station)
-    add(journey_class)
+    journeys.last.end(exit_station: exit_station)
   end
 
   def add(journey)
     journeys << journey
   end
+
+  def journeys
+    @journeys
+  end
+
+#private
+attr_reader :journey_class
+
 
 end
